@@ -21,9 +21,14 @@
       plugins: [
         function (hook, vm) {
           hook.beforeEach(function (content) {
+            var base = location.pathname;
+            if (base.slice(-1) !== '/') base += '/';
             return content.replace(
-              /!\[\[Articles\/JWT Articles\/Article \d+\/([^\]]+?)\]\]/g,
-              '![]($1)'
+              /!\[\[([^\]]+?)\]\]/g,
+              function (match, p) {
+                var encoded = p.split('/').map(encodeURIComponent).join('/');
+                return '![](' + base + encoded + ')';
+              }
             );
           });
         }
