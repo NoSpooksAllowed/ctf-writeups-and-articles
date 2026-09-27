@@ -21,8 +21,9 @@
       plugins: [
         function (hook, vm) {
           hook.beforeEach(function (content) {
-            var base = location.pathname;
-            if (base.slice(-1) !== '/') base += '/';
+            var path = location.pathname.replace(/\/index\.html$/, '');
+            if (path.slice(-1) !== '/') path += '/';
+            var base = location.protocol + '//' + location.host + path;
             return content.replace(
               /!\[\[([^\]]+?)\]\]/g,
               function (match, p) {
