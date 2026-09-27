@@ -141,7 +141,7 @@ Response — a JWK Set:
 
 #### Step 3 — Convert the public key to X.509 PEM
 
-The JWK is in JSON format, but the server verifies using its own copy of the key — typically **X.509 PEM**. Convert the JWK to PEM (using a [converter tool](`https://wwtools.dev/tools/pem-jwk-converter`) or the script below).
+The JWK is in JSON format, but the server verifies using its own copy of the key — typically **X.509 PEM**. Convert the JWK to PEM (using a [converter tool](https://wwtools.dev/tools/pem-jwk-converter) or the script below).
 
 Converted PEM key:
 
