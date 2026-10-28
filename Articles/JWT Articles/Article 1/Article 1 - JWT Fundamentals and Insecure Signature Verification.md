@@ -8,7 +8,7 @@
 
 ---
 
-# About this article
+## About this article
 
 All examples, requests, and exploitation steps are based on real lab walkthroughs.
 
