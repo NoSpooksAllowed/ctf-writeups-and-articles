@@ -2,6 +2,16 @@
 
 > Based on theory notes and labs from [Hack The Box Academy](https://academy.hackthebox.com/) and [PortSwigger Web Security Academy](https://portswigger.net/web-security).
 
+**Labs covered:**
+- Hack The Box Academy — File Inclusions *Final Assessment* ("Sumace Consulting")
+- TryHackMe *Include* (medium) — supporting recon (SSRF chain, session intel)
+
+---
+
+## About this article
+
+All examples, requests, payloads, and exploitation steps are based on real lab walkthrough logs in the Obsidian vault — full detail, including honest dead ends.
+
 **What's inside:**
 - What is LFI
 - The vulnerability types that matter, with payloads that actually work
