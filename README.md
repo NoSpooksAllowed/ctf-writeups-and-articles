@@ -4,7 +4,11 @@ A collection of penetration testing writeups and security articles, built on lab
 
 ## Articles
 
-### JWT Series
+### LFI
+
+- [Article — LFI: from theory to RCE](Articles/LFI%20Articles/Article%201.md)
+
+### JWT
 
 - [Article 1 — JWT Fundamentals and Insecure Signature Verification](Articles/JWT%20Articles/Article%201/Article%201%20-%20JWT%20Fundamentals%20and%20Insecure%20Signature%20Verification.md)
 - [Article 2 — Brute-Forcing Weak JWT Secrets](Articles/JWT%20Articles/Article%202/Article%202%20-%20Brute-Forcing%20Weak%20JWT%20Secrets.md)
@@ -13,4 +17,4 @@ A collection of penetration testing writeups and security articles, built on lab
 
 ---
 
-*More articles will be added as the series grows.*
+*More articles will be added as time goes on.*
