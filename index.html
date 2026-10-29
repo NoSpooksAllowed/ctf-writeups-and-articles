@@ -20,7 +20,13 @@
       sidebarDisplayLevel: 3,
       alias: {
         '/.*/_sidebar.md': '/_sidebar.md',
-        '/.*/_sidebar': '/_sidebar'
+        '/.*/_sidebar': '/_sidebar',
+        // fallback for stale relative links resolved against repo root (pre-fix cached pages)
+        '/Article%201': 'Articles/LFI%20Articles/Article%201.md',
+        '/Article%201/': 'Articles/JWT%20Articles/Article%201/',
+        '/Article%202': 'Articles/JWT%20Articles/Article%202/Article%202%20-%20Brute-Forcing%20Weak%20JWT%20Secrets.md',
+        '/Article%203': 'Articles/JWT%20Articles/Article%203/Article%203%20-%20Injecting%20Self-Signed%20JWTs%20via%20Header%20Parameters.md',
+        '/Article%204': 'Articles/JWT%20Articles/Article%204/Article%204%20-%20Algorithm%20Confusion%20Attacks.md'
       },
       auto2top: true,
       plugins: [
