@@ -4,7 +4,6 @@
 
 **Labs covered:**
 - Hack The Box Academy — File Inclusions *Final Assessment* ("Sumace Consulting")
-- TryHackMe *Include* (medium) — supporting recon (SSRF chain, session intel)
 
 ---
 
