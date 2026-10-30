@@ -1323,11 +1323,11 @@ The chain only opens **because every step feeds the next one**: fuzzing finds LF
 8. **Webshell > reverse shell** in NAT/container environments: execution is embedded in ordinary HTTP responses, no callbacks, no tunnels.
 
 
-## 6. What I missed — and what I could have done better
+## 5. What I missed — and what I could have done better
 
 Honest post-mortem of my own run. The chain worked, but each item below is a place where I lost time by trusting payloads over sources, or skipped a cheap diagnostic.
 
-### 6.1 "Which function is it?" — answered 2 phases too late
+### 5.1 "Which function is it?" — answered 2 phases too late
 
 The include-vs-read question sat untested from the moment LFI #1 was confirmed. I attacked log poisoning, tested `disable_functions`, fumbled with wrappers — **three whole phases** — before asking the only question that mattered. The cheapest possible answer was one request at Phase 2, before any escalation attempts:
 
@@ -1340,7 +1340,7 @@ curl -s 'http://sumace.htb:PORT/api/image.php?p=....//....//....//....//....//..
 
 Either outcome answers the question in one request. Everything I did between Phase 2 and Phase 5 would have been Minecraft-ified into "read the source" if I had run this first.
 
-### 6.2 The php://filter ambiguity — a test I never ran
+### 5.2 The php://filter ambiguity — a test I never ran
 
 My php://filter attempts returned empty, and I parked two competing theories (wrapper blocked by ini vs app-level scheme filter) **without closing either**. The missing test was the scheme-first arrangement — wrapper scheme at the head of the input, traversal moved *inside* `resource`:
 
@@ -1351,7 +1351,7 @@ curl -s 'http://sumace.htb:PORT/api/image.php?p=php://filter/read=convert.base64
 
 Useful either way: if empty → the prefix explanation holds with an extra check; if content → the wrapper works and the whole read-only verdict was wrong. Lesson: **never leave two theories alive for multiple phases — pay the one request to disambiguate.** (In the final analysis the empty result was the prefix at work in *any* arrangement — the script prepends `../images/` unconditionally — but I learned that by reading the source, not by closing the hypothesis properly.)
 
-### 6.3 contact.php — the source that closed the lab, read last
+### 5.3 contact.php — the source that closed the lab, read last
 
 I read `index.php`, `dashboard.php`, `thanks.php` — and only then `contact.php`, which turned out to hold the actual include. Sequencing misstep: after confirming `file_get_contents` in `image.php`, the *first* thing to do is sweep **all sibling scripts in the same directory** (they're likely to share state/directories with the vulnerable one), not cherry-pick:
 
@@ -1365,7 +1365,7 @@ grep -l "include\|require\|eval\|exec" src_*
 
 One batch — and the `region` include surfaces immediately, no guessing involved.
 
-### 6.4 `%250A` in path payloads — self-inflicted decode damage
+### 5.4 `%250A` in path payloads — self-inflicted decode damage
 
 One of my trigger probes used a payload with `%250A` inside the path, and it silently broke:
 
@@ -1377,7 +1377,7 @@ One of my trigger probes used a payload with `%250A` inside the path, and it sil
 
 Plus the same request carried one `../` more than the path needed. Both cost a debugging round-trip. **Rule:** after URL-processing payloads, print the final string you actually send (double-decode it mentally or locally) — payload typos are invisible in empty responses.
 
-### 6.5 Content discovery inside `/api/` was never done
+### 5.5 Content discovery inside `/api/` was never done
 
 I fuzzed **parameters** heavily and **file names** never. The assessment only needed two api scripts, but a real target could hide another endpoint with a looser function — the difference between `include` and `read` might be exactly one undiscovered file away:
 
@@ -1387,7 +1387,7 @@ ffuf -u 'http://sumace.htb:PORT/api/FUZZ' \
      -e .php -fc 404
 ```
 
-### 6.6 The retro-summary for the lab note — worth duplicating here
+### 5.6 The retro-summary for the lab note — worth duplicating here
 
 What I walked away with:
 
