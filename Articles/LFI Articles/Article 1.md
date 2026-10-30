@@ -60,7 +60,7 @@ filename=..\..\..\windows\win.ini
 **Why it matters:**
 
 - **Source code disclosure** — reading app sources reveals previously unknown vulnerabilities
-- **Sensitive data exposure** — credentials, database keys, config paths
+- **Sensitive data exposure** — credentials, database credentials, config paths
 - **Remote Code Execution** — under certain conditions, full compromise of the server
 
 ### The one table that shapes every move
@@ -165,7 +165,7 @@ When the app *executes* included PHP files, including a source file gives render
 ?language=php://filter/read=convert.base64-encode/resource=config
 ```
 
-(watch for appended extensions: `resource=config` + app-appended `.php` = `config.php`). Decode locally: `echo '<b64>' | base64 -d` → credentials, database keys, references to more files.
+(watch for appended extensions: `resource=config` + app-appended `.php` = `config.php`). Decode locally: `echo '<b64>' | base64 -d` → credentials, database credentials, references to more files.
 
 Note: this requires `allow_url_fopen=On` and the function to accept URL wrappers — verify against php.ini (see walkthrough).
 
