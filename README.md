@@ -7,6 +7,7 @@ A collection of penetration testing writeups and security articles, built on lab
 ### LFI
 
 - [Article — LFI: from theory to RCE](Articles/LFI%20Articles/Article%201/Article%201.md)
+- [Article 2 — php://filter in depth](Articles/LFI%20Articles/Article%202/Article%202.md)
 
 ### JWT
 
