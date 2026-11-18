@@ -2,21 +2,12 @@
 
 A collection of penetration testing writeups and security articles, built on lab-based walkthroughs.
 
-## Articles
+**[Articles](Articles/)** — theory-then-practice series:
 
-### LFI
+- [LFI](Articles/LFI%20Articles/) — File Inclusion: `str_replace` bypasses, php://filter mechanics, filter chains, LFI → RCE.
+- [JWT](Articles/JWT%20Articles/) — JSON Web Tokens: fundamentals, weak-secret brute-forcing, header-parameter injection, algorithm confusion.
 
-- [Article — LFI: from theory to RCE](Articles/LFI%20Articles/Article%201/Article%201.md)
-- [Article 2 — php://filter in depth](Articles/LFI%20Articles/Article%202/Article%202.md)
-
-### JWT
-
-- [Article 1 — JWT Fundamentals and Insecure Signature Verification](Articles/JWT%20Articles/Article%201/Article%201%20-%20JWT%20Fundamentals%20and%20Insecure%20Signature%20Verification.md)
-- [Article 2 — Brute-Forcing Weak JWT Secrets](Articles/JWT%20Articles/Article%202/Article%202%20-%20Brute-Forcing%20Weak%20JWT%20Secrets.md)
-- [Article 3 — Injecting Self-Signed JWTs via Header Parameters](Articles/JWT%20Articles/Article%203/Article%203%20-%20Injecting%20Self-Signed%20JWTs%20via%20Header%20Parameters.md)
-- [Article 4 — Algorithm Confusion Attacks](Articles/JWT%20Articles/Article%204/Article%204%20-%20Algorithm%20Confusion%20Attacks.md)
-
-## CTF
+**[CTF](CTF/)** — box walkthroughs:
 
 - [TryHackMe — Include](CTF/Include/include.thm.en.md) — two web apps, one chain: Mass Assignment → SSRF on the Node.js portal leaks creds for the SysMon PHP app, then LFI + SSH log poisoning via paramiko → webshell → RCE.
 
