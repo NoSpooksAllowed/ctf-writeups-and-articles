@@ -7,3 +7,5 @@
     * [Article 2 — Brute-Forcing Weak JWT Secrets](Articles/JWT%20Articles/Article%202/Article%202%20-%20Brute-Forcing%20Weak%20JWT%20Secrets.md)
     * [Article 3 — Injecting Self-Signed JWTs via Header Parameters](Articles/JWT%20Articles/Article%203/Article%203%20-%20Injecting%20Self-Signed%20JWTs%20via%20Header%20Parameters.md)
     * [Article 4 — Algorithm Confusion Attacks](Articles/JWT%20Articles/Article%204/Article%204%20-%20Algorithm%20Confusion%20Attacks.md)
+  * [CTF](CTF/)
+    * [TryHackMe — Include](CTF/Include/include.thm.en.md)
