@@ -33,19 +33,14 @@
       plugins: [
         function (hook, vm) {
           hook.beforeEach(function (content) {
-            // ![[obsidian-style.png]] -> ![](deployBase + current page dir + img)
-            // vm.route.file is the md path of the current page (works under hash
-            // routing, where location.pathname never changes per page)
-            var file = (vm.route && vm.route.file) || '';
-            var dir = file.split('/').slice(0, -1).map(encodeURIComponent).join('/');
-            var path = location.pathname.replace(/\/index\.html$/, '');
-            if (path.slice(-1) !== '/') path += '/';
-            var base = path + (dir ? dir + '/' : '');
+            // ![[obsidian-style.png]] -> ![](obsidian-style.png)
+            // keep the src relative and let docsify resolve it against the
+            // current page's directory (same as regular markdown images) --
+            // building an absolute path here makes docsify double the prefix
             return content.replace(
               /!\[\[([^\]]+?)\]\]/g,
               function (match, p) {
-                var encoded = p.split('/').map(encodeURIComponent).join('/');
-                return '![](' + base + encoded + ')';
+                return '![](' + p.trim() + ')';
               }
             );
           });
