@@ -33,14 +33,22 @@
       plugins: [
         function (hook, vm) {
           hook.beforeEach(function (content) {
-            // ![[obsidian-style.png]] -> ![](obsidian-style.png)
-            // keep the src relative and let docsify resolve it against the
-            // current page's directory (same as regular markdown images) --
-            // building an absolute path here makes docsify double the prefix
+            // Obsidian-style embeds, two conventions live in this vault:
+            //   ![[Articles/JWT Articles/.../img.png]]  -> vault-root-relative
+            //   ![[bare.png]]                           -> relative to the page
+            // Root-relative paths must become absolute URLs, otherwise docsify
+            // re-prefixes them with the page dir (doubled path -> 404). Bare
+            // names stay relative so docsify resolves them against the page's
+            // own directory, like a regular markdown image.
+            var path = location.pathname.replace(/\/index\.html?$/, '');
+            if (path.slice(-1) !== '/') path += '/';
+            var root = location.origin + path;
             return content.replace(
-              /!\[\[([^\]]+?)\]\]/g,
+              /!\[\[([^\]|]+?)(?:\|[^\]]*)?\]\]/g,
               function (match, p) {
-                return '![](' + p.trim() + ')';
+                p = p.trim();
+                var encoded = p.split('/').map(encodeURIComponent).join('/');
+                return '![](' + (encoded.indexOf('/') !== -1 ? root + encoded : encoded) + ')';
               }
             );
           });
