@@ -16,6 +16,10 @@ A collection of penetration testing writeups and security articles, built on lab
 - [Article 3 — Injecting Self-Signed JWTs via Header Parameters](Articles/JWT%20Articles/Article%203/Article%203%20-%20Injecting%20Self-Signed%20JWTs%20via%20Header%20Parameters.md)
 - [Article 4 — Algorithm Confusion Attacks](Articles/JWT%20Articles/Article%204/Article%204%20-%20Algorithm%20Confusion%20Attacks.md)
 
+## CTF
+
+- [TryHackMe — Include](CTF/Include/include.thm.en.md) — two web apps, one chain: Mass Assignment → SSRF on the Node.js portal leaks creds for the SysMon PHP app, then LFI + SSH log poisoning via paramiko → webshell → RCE.
+
 ---
 
-*More articles will be added as time goes on.*
+*More articles and writeups will be added as time goes on.*
